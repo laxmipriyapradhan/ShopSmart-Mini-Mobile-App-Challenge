@@ -1,10 +1,31 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { fonts } from "../utils/fonts";
 
-const CartCard = ({ item, handleDelete }) => {
+type CartItem = {
+  id: string | number;
+  title: string;
+  price: number;
+  image: string;
+  size: string;
+  color?: string;
+};
+
+type Props = {
+  item: CartItem;
+  handleDelete: (id: string | number) => void;
+};
+
+const CartCard: React.FC<Props> = ({ item, handleDelete }) => {
   const imageUrl =
     "https://res.cloudinary.com/dlc5c1ycl/image/upload/v1710567613/cwlk21f74nd9iamrlzkh.png";
+
   return (
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.image} />
@@ -14,7 +35,7 @@ const CartCard = ({ item, handleDelete }) => {
         <View style={styles.textCircleContainer}>
           <View
             style={[styles.circle, { backgroundColor: item?.color || "red" }]}
-          ></View>
+          />
           <View style={styles.sizeContainer}>
             <Text style={styles.sizeText}>{item.size}</Text>
           </View>

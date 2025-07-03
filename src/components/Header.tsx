@@ -2,10 +2,18 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { fonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const Header = ({ isCart }) => {
-  const navigation = useNavigation();
+type RootStackParamList = {
+  HOME: undefined;
+};
 
+const Header = ({ isCart }: { isCart: boolean }) => {
+
+  const avatar = useSelector((state: RootState) => state.profile.avatar);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const handleBack = () => {
     navigation.navigate("HOME");
   };
@@ -22,21 +30,29 @@ const Header = ({ isCart }) => {
           />
         </TouchableOpacity>
       ) : (
+
         <View style={styles.appDrawerContainer}>
           <Image
             source={require("../assets/apps.png")}
             style={styles.appDrawerIcon}
+
           />
         </View>
+
       )}
 
       {isCart ? <Text style={styles.titleText}>My Cart</Text> : null}
-      <View>
+
+
+      {avatar ? (
+        <Image source={{ uri: avatar }} style={styles.profileImage} />
+      ) : (
         <Image
-          source={require("../assets/Ellipse2.png")}
+          source={require("../assets/profile-removebg-preview.png")}
           style={styles.profileImage}
         />
-      </View>
+      )}
+
     </View>
   );
 };

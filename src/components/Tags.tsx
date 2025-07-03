@@ -1,35 +1,38 @@
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ListRenderItem,
 } from "react-native";
-import React, { useState } from "react";
 
-const Tags = () => {
-  const [selected, setSelected] = useState("Trending Now");
-  const tags = ["Trending Now", "All", "New", "Fashion", "Mens"];
+const Tags: React.FC = () => {
+  const [selected, setSelected] = useState<string>("Trending Now");
+  const tags: string[] = ["Trending Now", "All", "New", "Fashion", "Mens"];
+
+  const renderItem: ListRenderItem<string> = ({ item }) => (
+    <TouchableOpacity onPress={() => setSelected(item)}>
+      <Text
+        style={[
+          styles.tagText,
+          item === selected ? styles.isSelected : null,
+        ]}
+      >
+        {item}
+      </Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
         horizontal
         data={tags}
+        renderItem={renderItem}
+        keyExtractor={(item) => item}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity onPress={() => setSelected(item)}>
-              <Text
-                style={[
-                  styles.tagText,
-                  item == selected ? styles.isSelected : null,
-                ]}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
         contentContainerStyle={styles.container}
       />
     </View>
@@ -51,7 +54,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   isSelected: {
-    backgroundColor: "#E96E6E",
+    backgroundColor: "#1484CD",
     color: "#FFFFFF",
   },
   container: {

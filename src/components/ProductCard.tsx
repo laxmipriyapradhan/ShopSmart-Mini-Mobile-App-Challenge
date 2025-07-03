@@ -1,14 +1,29 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { fonts } from "../utils/fonts";
+import { Product } from "../navigation/types"; 
 
-const ProductCard = ({ item, handleProductClick, toggleFavorite }) => {
+type Props = {
+  item: Product;
+  handleProductClick: (item: Product) => void;
+  toggleFavorite: (item: Product) => void;
+};
+
+const ProductCard: React.FC<Props> = ({
+  item,
+  handleProductClick,
+  toggleFavorite,
+}) => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => {
-        handleProductClick(item);
-      }}
+      onPress={() => handleProductClick(item)}
     >
       <Image source={{ uri: item.image }} style={styles.coverImage} />
       <View style={styles.contentContainer}>
@@ -16,22 +31,15 @@ const ProductCard = ({ item, handleProductClick, toggleFavorite }) => {
         <Text style={styles.price}>${item.price}</Text>
       </View>
       <View style={styles.likeContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            toggleFavorite(item);
-          }}
-        >
-          {item.isFavorite ? (
-            <Image
-              source={require("../assets/favoriteFilled.png")}
-              style={styles.faviorate}
-            />
-          ) : (
-            <Image
-              source={require("../assets/favorite.png")}
-              style={styles.faviorate}
-            />
-          )}
+        <TouchableOpacity onPress={() => toggleFavorite(item)}>
+          <Image
+            source={
+              item.isFavorite
+                ? require("../assets/favoriteFilled.png")
+                : require("../assets/favorite.png")
+            }
+            style={styles.favorite}
+          />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -73,7 +81,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
   },
-  faviorate: {
+  favorite: {
     height: 20,
     width: 20,
   },

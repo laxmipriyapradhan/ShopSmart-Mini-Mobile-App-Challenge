@@ -1,25 +1,30 @@
 import {
+  Alert,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import Header from "../components/Header";
 import CartCard from "../components/CartCard";
-import { fonts } from "../utils/fonts";
-import { CartContext } from "../context/CartContext";
+import PrimaryButton from "../resuableComponent/PrimaryBuuton";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { removeFromCart } from "../redux/cartSlice";
 
 const CartScreen = () => {
-  const { cartItems, deleteCartItem, totalPrice } = useContext(CartContext);
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const totalPrice = useSelector((state: RootState) => state.cart.total);
 
-  const handleDeleteItem = async (id) => {
-    await deleteCartItem(id);
+  const handleDeleteItem = async (id: string) => {
+    dispatch(removeFromCart(id));
   };
   return (
-    <LinearGradient colors={["#FDF0F3", "#FFFBFC"]} style={styles.container}>
+    <LinearGradient colors={["#DEF4FF", "#FFFBFC"]} style={styles.container}>
       <View style={styles.header}>
         <Header isCart={true} />
       </View>
@@ -49,9 +54,10 @@ const CartScreen = () => {
                 </Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.button}>
+            {/* <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Checkout</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <PrimaryButton title="Checkout" onPress={() => Alert.alert("Added to cart succssfully")} />
           </>
         }
       />
@@ -92,21 +98,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   grandPriceText: {
-    color: "#3C3C3C",
+    color: "#FFF",
     fontWeight: "700",
   },
-  button: {
-    backgroundColor: "#E96E6E",
-    height: 60,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    marginTop: 30,
-  },
-  buttonText: {
-    fontSize: 24,
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontFamily: fonts.regular,
-  },
+
 });
+

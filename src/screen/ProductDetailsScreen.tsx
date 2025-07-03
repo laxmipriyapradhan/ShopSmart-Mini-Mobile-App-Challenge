@@ -1,11 +1,14 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useContext, useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, {  useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import Header from "../components/Header";
 import { fonts } from "../utils/fonts";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { addToCart } from "../utils/helper";
-import { CartContext } from "../context/CartContext";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootTabParamList } from "../navigation/types"; 
+import PrimaryButton from "../resuableComponent/PrimaryBuuton";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/cartSlice";
 
 const colorsArray = [
   "#91A1B0",
@@ -15,38 +18,55 @@ const colorsArray = [
   "#1D752B",
   "#000000",
 ];
+type ProductDetailsRouteParams = {
+  item: {
+    id: string;
+    title: string;
+    price: number;
+    image: string;
+   
+  };
+};
+
 
 const ProductDetailsScreen = () => {
-  const { addToCartItem } = useContext(CartContext);
-  const route = useRoute();
-  const navigation = useNavigation();
-  const product = route.params.item;
+  const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
+  const dispatch = useDispatch();
+
+  const route = useRoute<RouteProp<{ PRODUCT_DETAILS: ProductDetailsRouteParams }, 'PRODUCT_DETAILS'>>();
+  const { item } = route.params;
+
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("#B11D1D");
   const imageUrl =
     "https://res.cloudinary.com/dlc5c1ycl/image/upload/v1710567613/vulb5bckiruhpzt2v8ec.png";
 
+
   const handleAddToCart = () => {
-    product.color = selectedColor;
-    product.size = selectedSize;
-    addToCartItem(product);
+    const productWithVariants = {
+      ...item,
+      size: selectedSize,
+      color: selectedColor,
+    };
+    dispatch(addToCart(productWithVariants));
     navigation.navigate("CART")
   };
+  
   return (
-    <LinearGradient colors={["#FDF0F3", "#FFFBFC"]} style={styles.container}>
+    <ScrollView>
+    <LinearGradient colors={["#DEF4FF", "#FFFBFC"]} style={styles.container}>
       <View style={styles.header}>
-        <Header />
+        <Header  isCart = {false}/>
       </View>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: product.image }} style={styles.coverImage} />
+        <Image source={{ uri: item.image }} style={styles.coverImage} />
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.fontText}>{product.title}</Text>
-          <Text style={styles.fontText}>${product.price}</Text>
+          <Text style={styles.fontText}>{item.title}</Text>
+          <Text style={styles.fontText}>${item.price}</Text>
         </View>
         <Text style={[styles.fontText, styles.sizeText]}>Size</Text>
-        {/* size container */}
         <View style={styles.sizeContainer}>
           <TouchableOpacity
             style={styles.sizeValueContainer}
@@ -127,14 +147,10 @@ const ProductDetailsScreen = () => {
             );
           })}
         </View>
-        {/* cart button */}
-        <View>
-          <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
-            <Text style={styles.buttonText}>Add to Cart</Text>
-          </TouchableOpacity>
-        </View>
+        <PrimaryButton title="Add to Cart" onPress={handleAddToCart} />
       </View>
     </LinearGradient>
+    </ScrollView>
   );
 };
 
@@ -166,7 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: fonts.regular,
     fontWeight: "700",
-    color: "#444444",
     color: "#444444",
   },
   sizeText: {
@@ -207,18 +222,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 18,
   },
-  button: {
-    backgroundColor: "#E96E6E",
-    height: 62,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    marginTop: 20,
-  },
-  buttonText: {
-    fontSize: 24,
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontFamily: fonts.regular,
-  },
+
 });
+
